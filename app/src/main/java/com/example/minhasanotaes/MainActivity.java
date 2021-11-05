@@ -17,26 +17,42 @@ import com.example.minhasanotaes.databinding.ActivityMainBinding;
 
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 
 public class MainActivity extends AppCompatActivity {
 
-    private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;
+    private AnotacaoPreferencias preferencias;
+    private EditText editAnotacao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        binding.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+        editAnotacao = findViewById(R.id.editAnotacao);
+
+        preferencias = new AnotacaoPreferencias(getApplicationContext());
+
+        //FAB
+        binding.fab.setOnClickListener(view -> {
+
+            String textoRecuperado = editAnotacao.getText().toString();
+            //Validar se foi digitado algo
+            if (textoRecuperado.equals("")){
+                Snackbar.make(view, "Preencha a anotação!", Snackbar.LENGTH_LONG).show();
+            }else{
+                preferencias.salvarAnotacao(textoRecuperado);
+                Snackbar.make(view, "Anotação salva com sucesso!", Snackbar.LENGTH_LONG).show();
             }
         });
+
+        //Recuperar anotação
+        String anotacao = preferencias.recuperarAnotacao();
+        if (!anotacao.equals("")){
+            editAnotacao.setText(anotacao);
+        }
     }
 
 }
